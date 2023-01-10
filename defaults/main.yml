@@ -3,7 +3,24 @@
 
 rsync_server_timeout: 300
 rsync_server_max_connections: 10
+rsync_server_pid_file: /var/run/rsyncd.pid
+rsync_server_readonly: "yes"
+rsync_server_uid: nobody
+rsync_server_gid: nobody
+#rsync_server_hosts_allow: 192.168.128.0/24 192.168.219.0/24
+rsync_server_hosts_allow:
+rsync_server_dont_compress: "*.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2 *.lzo *.lz4 *.xz *.txz *.zstd *.lz *.apk *.cab *.dmg *.rar *.war *.jar *.mp3 *.hdr *.ogg *.iso *.tbz *.mpg *.mpeg *.wmv *.mp4 *.mkv"
+
 rsync_server_shares: []
+#rsync_server_shares:
+#  - name: www
+#    comment: web service
+#    path: /var/lib/http
+#    readonly: no
+#    uid: nobody
+#    gid: nobody
+#    usechroot: true
+#    maxconnections: 100
 
 rsync_server_logrotate_interval: weekly
 rsync_server_logrotate_backlog_size: 52

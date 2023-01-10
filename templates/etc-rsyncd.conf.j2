@@ -1,18 +1,31 @@
 # {{ ansible_managed }}
 
 [global]
-timeout = {{ rsync_server_timeout }}
+timeout = {{ rsync_server_timeout | default('900')}}
 max connections = {{ rsync_server_max_connections }}
+pid file = {{ rsync_server_pid_file | default('/var/run/rsyncd.pid')}}
+read only = {{ rsync_server_readonly }}
+uid = {{ rsync_server_uid | default('nobody') }}
+gid = {{ rsync_server_gid | default('nobody') }}
+{% if rsync_server_hosts_allow  %}
+hosts allow = {{ rsync_server_hosts_allow }}
+{% endif %}
+reverse lookup = no
+# default log file: /var/log/messages
 log file = /var/log/rsyncd/rsyncd.log
-dont compress = *.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2 *.lzo *.lz4 *.xz *.txz *.zstd *.lz *.apk *.cab *.dmg *.rar *.war *.jar
-
+dont compress = {{ rsync_server_dont_compress }}
 
 {% for share in rsync_server_shares %}
 [{{ share.name }}]
 path = {{ share.path }}
 comment = {{ share.comment | default(share.path) }}
 read only = {{ share.readonly | default(True) | ternary('true', 'false' ) }}
+use chroot = {{ share.usechroot | default(True) | ternary('true', 'false' ) }}
+max connections = {{ share.maxconnections | default('1000') }}
 uid = {{ share.uid | default('nobody') }}
 gid = {{ share.gid | default('nobody') }}
 exclude = {{ share.excludes | default(['lost+found', '.*']) | join(' ') }}
 {% endfor %}
+
+# exclude = lost+found/
+# ignore nonreadable = yes
